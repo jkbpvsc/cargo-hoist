@@ -1,0 +1,10 @@
+[package]
+name = "cargo-hoist"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+env_logger = "0.11.6"
+log = "0.4.25"
+pathdiff = "0.2.3"
+toml_edit = "0.22.23"
