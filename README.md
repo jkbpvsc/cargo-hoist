@@ -1,6 +1,6 @@
 # cargo-hoist
 
-**cargo-hoist** is a Rust command-line tool that automates the hoisting of shared dependency source information (version, git, or local path) from sub‑crate manifests in a workspace to the root `Cargo.toml` under the `[workspace.dependencies]` section. This tool streamlines dependency management in large workspaces by centralizing versioning and source details while preserving extra attributes (like features, optional flags, etc.) in the individual crates.
+**cargo-hoist** is a CLI tool that automatically hoists shared dependency sources (version, git, or local path) from Rust workspace crates into the root `Cargo.toml` under the `[workspace.dependencies]` section. This centralizes dependency source information while preserving extra attributes (such as features and optional flags) in the individual crate manifests.
 
 ![Rust](https://img.shields.io/badge/rust-2021-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
@@ -8,37 +8,37 @@
 ## Features
 
 - **Centralize Dependency Sources:**  
-  Automatically gathers dependency source information from multiple workspace members and hoists it to the root manifest.
+  Automatically hoist version, git, or local path information from multiple workspace members into the root manifest.
 
 - **Supports Multiple Dependency Types:**  
-  Handles versioned dependencies, git dependencies (with branch, rev, or tag), and local path dependencies. Local paths are recalculated relative to the workspace root.
+  Handles versioned, git, and local path dependencies. Local paths are recalculated relative to the workspace root.
 
 - **Interactive Conflict Resolution:**  
-  If the same dependency is declared with conflicting source information across crates, the tool prompts you to select the correct source.
+  When a dependency is declared with conflicting source information across crates, cargo-hoist prompts you to choose the correct source.
 
 - **Preserves Extra Attributes:**  
-  While the root manifest only stores the dependency source (version/git/path), extra attributes (features, optional, etc.) remain in the sub‑crate manifests with an added `workspace = true` flag.
+  Extra attributes (like features, optional flags, etc.) remain in the sub‑crate manifests while the hoisted dependency in the root only stores the source information.
 
 - **Skips Already-Hoisted Dependencies:**  
-  Dependencies that are already marked with a workspace import (`{ workspace = true }`) are automatically ignored.
+  Dependencies already marked with `{ workspace = true }` are automatically ignored.
 
 - **Debug Logging:**  
-  Built-in debug logging (using the `log` and `env_logger` crates) helps trace the tool’s behavior and diagnose issues.
+  Built-in debug logging (using the `log` and `env_logger` crates) helps trace the tool’s actions and diagnose issues.
 
 ## Installation
 
-To install **cargo-hoist**, clone the repository and build the project with Cargo:
+### Install from GitHub
+
+To install **cargo-hoist** directly from GitHub, run:
 
 ```bash
-git clone https://github.com/yourusername/cargo-hoist.git
-cd cargo-hoist
-cargo install --path .
+cargo install --git https://github.com/jkbpvsc/cargo-hoist.git
 ```
 
-After installation, the tool is available as a Cargo subcommand:
+This will build and install the tool so you can invoke it as a Cargo subcommand:
 
 ```bash
-cargo hoist -- /path/to/your/workspace
+cargo hoist [/path/to/your/workspace]
 ```
 
 If no workspace path is specified, the current directory is assumed to be the workspace root.
@@ -46,7 +46,7 @@ If no workspace path is specified, the current directory is assumed to be the wo
 ## Usage
 
 1. **Workspace Setup:**  
-   Ensure your workspace root contains a `Cargo.toml` with a `[workspace]` section listing all member crates:
+   Ensure your workspace root contains a `Cargo.toml` with a `[workspace]` section listing all member crates. For example:
 
    ```toml
    [workspace]
@@ -58,7 +58,7 @@ If no workspace path is specified, the current directory is assumed to be the wo
    ```
 
 2. **Run cargo-hoist:**  
-   From your workspace root (or by specifying the path), run:
+   From your workspace root (or by specifying the workspace path), run:
 
    ```bash
    cargo hoist
@@ -67,20 +67,20 @@ If no workspace path is specified, the current directory is assumed to be the wo
    or
 
    ```bash
-   cargo hoist -- /path/to/your/workspace
+   cargo hoist /path/to/your/workspace
    ```
 
-3. **Resolve Conflicts (if any):**  
-   If the tool detects conflicting source specifications for a dependency, it will display the options and prompt you to choose one or skip hoisting that dependency.
+3. **Resolve Conflicts:**  
+   If the same dependency appears in multiple crates with conflicting source specifications, cargo-hoist will prompt you to select the correct source or to skip hoisting that dependency.
 
 4. **Review Changes:**  
-   The tool updates:
-   - The workspace root’s `Cargo.toml`, adding hoisted dependencies under `[workspace.dependencies]`.
-   - Each sub‑crate’s `Cargo.toml`, replacing the dependency’s source keys (e.g., version/git/path) with `{ workspace = true }` while preserving extra attributes.
+   After running, cargo-hoist updates:
+   - The workspace root’s `Cargo.toml` by adding hoisted dependencies under `[workspace.dependencies]`.
+   - Each sub‑crate’s `Cargo.toml` by replacing the dependency’s source keys (e.g., version, git, or path) with `{ workspace = true }`, while preserving extra attributes.
 
-## Example
+### Example
 
-For instance, suppose you have the following in one of your crates:
+For instance, suppose you have the following dependency in one of your crates:
 
 ```toml
 [dependencies]
@@ -111,16 +111,13 @@ To see detailed debug logs when running **cargo-hoist**, set the `RUST_LOG` envi
 RUST_LOG=debug cargo hoist
 ```
 
-The debug output will include information about dependency processing, computed relative paths, and updates performed on each manifest.
+The debug output includes information about dependency processing, computed relative paths for local dependencies, and file update actions.
 
 ## Contributing
 
-Contributions, bug reports, and feature requests are welcome! Feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/yourusername/cargo-hoist).
+Contributions, bug reports, and feature requests are welcome! Feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/jkbpvsc/cargo-hoist).
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
----
-
-This README should help users quickly understand the purpose and usage of **cargo-hoist** and aid discoverability among developers managing large Rust workspaces. Enjoy streamlined dependency management!
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+```
